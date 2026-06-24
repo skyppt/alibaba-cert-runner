@@ -29,8 +29,7 @@ sqlite3 logs/alibaba_cert_runner_506068.sqlite3 \
 
 ```bash
 cd /Users/simon/source/alibaba-cert-runner
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+./run_mac.sh setup
 cp .env.example .env
 ```
 
@@ -45,9 +44,7 @@ Chrome 需要保持登录 Alibaba，且开启：
 ## 下载商品 ID
 
 ```bash
-.venv/bin/python tools/alibaba_cert_queue_from_api.py \
-  --db logs/alibaba_cert_runner_506068.sqlite3 \
-  --read-api-total
+./run_mac.sh sync
 ```
 
 如需按时间窗口重跑：
@@ -64,39 +61,25 @@ Chrome 需要保持登录 Alibaba，且开启：
 先跑小批测试：
 
 ```bash
-.venv/bin/python tools/alibaba_cert_chrome_runner.py \
-  --db logs/alibaba_cert_runner_506068.sqlite3 \
-  --limit 5 \
-  --publish \
-  --product-timeout 300 \
-  --max-consecutive-failures 5 \
-  --sleep-between 1
+LIMIT=5 ./run_mac.sh run
 ```
 
 主批次：
 
 ```bash
-.venv/bin/python tools/alibaba_cert_chrome_runner.py \
-  --db logs/alibaba_cert_runner_506068.sqlite3 \
-  --limit 500 \
-  --publish \
-  --product-timeout 300 \
-  --max-consecutive-failures 10 \
-  --sleep-between 1
+./run_mac.sh run
 ```
 
 重试失败队列：
 
 ```bash
-.venv/bin/python tools/alibaba_cert_chrome_runner.py \
-  --db logs/alibaba_cert_runner_506068.sqlite3 \
-  --limit 100 \
-  --publish \
-  --retry-failed \
-  --attempts 2 \
-  --product-timeout 300 \
-  --max-consecutive-failures 10 \
-  --sleep-between 1
+LIMIT=100 ./run_mac.sh retry
+```
+
+查看当前进度：
+
+```bash
+./run_mac.sh status
 ```
 
 ## 恢复旧版本
