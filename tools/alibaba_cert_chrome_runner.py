@@ -182,7 +182,7 @@ def chrome_process_product(url: str, publish: bool, timeout: int) -> dict:
         return {{
           ok: document.readyState === 'complete'
             && (location.href.includes('itemId=' + expected) || location.href.includes('login'))
-            && ((text.includes('关联商品证书') && text.includes('提交')) || location.href.includes('login')),
+            && ((text.includes('关联商品证书') && text.includes('提交')) || text.includes('记录不存在') || location.href.includes('login')),
           href: location.href,
           text: text.slice(0, 200)
         }};
@@ -193,16 +193,19 @@ def chrome_process_product(url: str, publish: bool, timeout: int) -> dict:
         const text = document.body ? document.body.innerText : '';
         const blockStart = text.indexOf('关联商品证书');
         const block = blockStart >= 0 ? text.slice(blockStart, blockStart + 900) : '';
-        return {{
-          href: location.href,
-          login: location.href.includes('login'),
-          hasCertBlock: blockStart >= 0,
-          hasCerts: block.includes('CE') && block.includes('UL 508')
-        }};
+          return {{
+            href: location.href,
+            login: location.href.includes('login'),
+            notFound: text.includes('记录不存在'),
+            hasCertBlock: blockStart >= 0,
+            hasCerts: block.includes('CE') && block.includes('UL 508')
+          }};
       }})())`));
 
       if (state.login) {{
         finalResult = {{ status: 'failed', message: 'login required', url: state.href }};
+      }} else if (state.notFound) {{
+        finalResult = {{ status: 'skipped', message: 'record not found', url: state.href }};
       }} else if (!state.hasCertBlock) {{
         finalResult = {{ status: 'skipped', message: 'certificate block not found; likely non-structured product', url: state.href }};
       }} else {{
