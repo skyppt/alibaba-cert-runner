@@ -45,8 +45,7 @@ ensure_venv() {
 
 ensure_ready() {
   if [[ ! -x "$PYTHON_BIN" ]]; then
-    echo "Missing .venv. Run: ./run_mac.sh setup"
-    exit 1
+    ensure_venv
   fi
   if [[ ! -f "$DB_PATH" ]]; then
     echo "Missing database: $DB_PATH"
@@ -88,8 +87,7 @@ retry_failed() {
 
 sync_products() {
   if [[ ! -x "$PYTHON_BIN" ]]; then
-    echo "Missing .venv. Run: ./run_mac.sh setup"
-    exit 1
+    ensure_venv
   fi
   if [[ ! -f .env ]]; then
     echo "Missing .env. Copy .env.example to .env and fill Alibaba API credentials."

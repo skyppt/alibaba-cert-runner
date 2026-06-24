@@ -41,6 +41,24 @@ Chrome 需要保持登录 Alibaba，且开启：
 允许 Apple 事件中的 JavaScript
 ```
 
+## 新电脑使用
+
+```bash
+git clone git@github.com:skyppt/alibaba-cert-runner.git
+cd alibaba-cert-runner
+./run_mac.sh status
+```
+
+如果 `.venv` 不存在，`run_mac.sh` 会自动创建虚拟环境并安装依赖。
+
+需要重新下载商品 ID 时，再配置 API：
+
+```bash
+cp .env.example .env
+```
+
+然后把 `.env` 里的 Alibaba API 信息填好。
+
 ## 下载商品 ID
 
 ```bash
